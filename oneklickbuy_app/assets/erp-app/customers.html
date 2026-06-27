@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Klick Buy - Customers</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <h3>One Klick Buy</h3>
+      <a href="#" data-route="dashboard.html">Dashboard</a>
+      <a href="#" data-route="products.html">Products</a>
+      <a href="#" data-route="customers.html" class="active">Customers</a>
+      <a href="#" data-route="invoices.html">Invoices</a>
+      <a href="#" data-route="orders.html">Orders</a>
+      <a href="#" data-route="inventory.html">Inventory</a>
+      <a href="#" data-route="reports.html">Reports</a>
+      <a href="#" data-route="settings.html">Settings</a>
+      <a href="#" data-route="profile.html">Profile</a>
+      <a href="#" id="logout-link">Logout</a>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Customers</h1></div>
+      <div class="card">
+        <table class="table"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th></tr></thead><tbody id="customers-table"></tbody></table>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from './js/firebase.js';
+    import { initRouter } from './js/router.js';
+    import { loadCustomers } from './js/customers.js';
+    initRouter();
+    onAuthStateChanged(auth, async (user) => { if (!user) { window.location.href = './index.html'; return; } await loadCustomers('customers-table'); });
+    document.getElementById('logout-link').addEventListener('click', async (event) => { event.preventDefault(); await signOut(auth); window.location.href = './index.html'; });
+  </script>
+</body>
+</html>

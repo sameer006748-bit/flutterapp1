@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Klick Buy - Inventory</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <h3>One Klick Buy</h3>
+      <a href="#" data-route="dashboard.html">Dashboard</a>
+      <a href="#" data-route="products.html">Products</a>
+      <a href="#" data-route="customers.html">Customers</a>
+      <a href="#" data-route="invoices.html">Invoices</a>
+      <a href="#" data-route="orders.html">Orders</a>
+      <a href="#" data-route="inventory.html" class="active">Inventory</a>
+      <a href="#" data-route="reports.html">Reports</a>
+      <a href="#" data-route="settings.html">Settings</a>
+      <a href="#" data-route="profile.html">Profile</a>
+      <a href="#" id="logout-link">Logout</a>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Inventory</h1></div>
+      <div class="card"><p class="muted">Stock movements and stock history screen is ready for Firebase-backed inventory records.</p></div>
+      <div class="card">
+        <h3>Inventory history</h3>
+        <div id="inventory-list"></div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from './js/firebase.js';
+    import { initRouter } from './js/router.js';
+    import { loadInventory } from './js/inventory.js';
+    initRouter();
+    onAuthStateChanged(auth, async (user) => { if (!user) { window.location.href = './index.html'; return; } await loadInventory('inventory-list'); });
+    document.getElementById('logout-link').addEventListener('click', async (event) => { event.preventDefault(); await signOut(auth); window.location.href = './index.html'; });
+  </script>
+</body>
+</html>

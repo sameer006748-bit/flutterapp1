@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Klick Buy - ERP Hub</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="auth-screen">
+    <div class="auth-card" style="max-width:980px; width:100%;">
+      <div class="row" style="grid-template-columns:1fr 1.1fr; align-items:start; gap:24px;">
+        <div>
+          <h2>One Klick Buy ERP Hub</h2>
+          <p>Yahan se aap login kar ke sab modules ko aik hi jagah se open kar sakte hain.</p>
+          <form id="login-form">
+            <input id="email" type="email" placeholder="Email" required />
+            <input id="password" type="password" placeholder="Password" required />
+            <button type="submit">Login & Open Dashboard</button>
+          </form>
+          <div id="auth-error" class="error"></div>
+          <div class="muted" style="margin-top:12px;">Demo login: admin@oneklickbuy.com / admin1234</div>
+        </div>
+
+        <div>
+          <h3 style="margin-top:0;">Quick Access Modules</h3>
+          <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+            <a class="card" href="./dashboard.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Dashboard</strong>
+              <div class="muted">Overview</div>
+            </a>
+            <a class="card" href="./products.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Products</strong>
+              <div class="muted">Stock & pricing</div>
+            </a>
+            <a class="card" href="./customers.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Customers</strong>
+              <div class="muted">Client records</div>
+            </a>
+            <a class="card" href="./invoices.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Invoices</strong>
+              <div class="muted">Billing</div>
+            </a>
+            <a class="card" href="./orders.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Orders</strong>
+              <div class="muted">Sales flow</div>
+            </a>
+            <a class="card" href="./inventory.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Inventory</strong>
+              <div class="muted">Stock history</div>
+            </a>
+            <a class="card" href="./reports.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Reports</strong>
+              <div class="muted">Performance</div>
+            </a>
+            <a class="card" href="./settings.html" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+              <strong>Settings</strong>
+              <div class="muted">Business config</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, signInWithEmailAndPassword } from './js/firebase.js';
+    import { seedDemoData } from './js/seed-demo.js';
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        await seedDemoData();
+        window.location.href = './dashboard.html';
+      } catch (error) {
+        document.getElementById('auth-error').textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>

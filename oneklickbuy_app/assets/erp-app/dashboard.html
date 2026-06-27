@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Klick Buy - Dashboard</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand-box">
+        <div class="brand-badge">OK</div>
+        <div>
+          <div class="brand-title">One Klick Buy</div>
+          <div class="brand-subtitle">ERP • POS • Inventory</div>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main</div>
+        <a href="#" data-route="dashboard.html" class="active">📊 Dashboard</a>
+        <a href="#" data-route="products.html">📦 Products</a>
+        <a href="#" data-route="customers.html">👥 Customers</a>
+        <a href="#" data-route="invoices.html">🧾 Invoices</a>
+        <a href="#" data-route="orders.html">🛒 Orders</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Operations</div>
+        <a href="#" data-route="inventory.html">🏬 Inventory</a>
+        <a href="#" data-route="reports.html">📈 Reports</a>
+        <a href="#" data-route="settings.html">⚙️ Settings</a>
+        <a href="#" data-route="profile.html">👤 Profile</a>
+      </div>
+      <a href="#" id="logout-link" class="logout-link">🚪 Logout</a>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="muted">Welcome back, your daily business overview is ready.</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-box">
+            <span>🔎</span>
+            <input type="text" placeholder="Search products, orders, customers..." />
+          </div>
+          <a href="./products.html" class="btn">Add Product</a>
+          <a href="./orders.html" class="btn btn-primary">New Order</a>
+        </div>
+      </div>
+
+      <div class="grid cards-3">
+        <div class="card">
+          <div class="card-header"><h3>Orders</h3><span class="badge success">Live</span></div>
+          <div class="card-body"><div id="sales-count" class="metric-value">0</div><div class="metric-label">Total orders recorded</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Products</h3><span class="badge warn">Stock</span></div>
+          <div class="card-body"><div id="products-count" class="metric-value">0</div><div class="metric-label">Active products</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Customers</h3><span class="badge">CRM</span></div>
+          <div class="card-body"><div id="customers-count" class="metric-value">0</div><div class="metric-label">Registered customers</div></div>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1.2fr 0.8fr;">
+        <div class="card">
+          <div class="card-header"><h3>Quick Actions</h3></div>
+          <div class="card-body">
+            <div class="row">
+              <a href="./products.html" class="card" style="padding:14px; text-decoration:none; color:inherit;">
+                <strong>Manage Products</strong>
+                <div class="muted">Add, edit and track stock</div>
+              </a>
+              <a href="./customers.html" class="card" style="padding:14px; text-decoration:none; color:inherit;">
+                <strong>Manage Customers</strong>
+                <div class="muted">Keep customer records updated</div>
+              </a>
+              <a href="./invoices.html" class="card" style="padding:14px; text-decoration:none; color:inherit;">
+                <strong>Invoices</strong>
+                <div class="muted">Create and review invoices</div>
+              </a>
+              <a href="./reports.html" class="card" style="padding:14px; text-decoration:none; color:inherit;">
+                <strong>Reports</strong>
+                <div class="muted">See business performance</div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Recent Activity</h3></div>
+          <div class="card-body" id="activity-list">
+            <div class="muted">Loading recent activity...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from './js/firebase.js';
+    import { initRouter } from './js/router.js';
+    import { fetchCollection } from './js/api.js';
+    initRouter();
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = './index.html';
+        return;
+      }
+      document.getElementById('user-label')?.remove();
+      const products = await fetchCollection('products');
+      const customers = await fetchCollection('customers');
+      const orders = await fetchCollection('orders');
+      document.getElementById('products-count').textContent = products.length;
+      document.getElementById('customers-count').textContent = customers.length;
+      document.getElementById('sales-count').textContent = orders.length;
+      document.getElementById('activity-list').innerHTML = [
+        `<div class="list-card"><span>Products synced</span><span class="badge success">${products.length}</span></div>`,
+        `<div class="list-card"><span>Customers synced</span><span class="badge">${customers.length}</span></div>`,
+        `<div class="list-card"><span>Orders synced</span><span class="badge warn">${orders.length}</span></div>`
+      ].join('');
+    });
+    document.getElementById('logout-link').addEventListener('click', async (event) => {
+      event.preventDefault();
+      await signOut(auth);
+      window.location.href = './index.html';
+    });
+  </script>
+</body>
+</html>
